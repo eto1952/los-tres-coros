@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <title>LOS TRES COROS</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- FONDO ANIMADO Y CAPAS DE AMBIENTACIÓN -->
+    <div id="bg-layer" class="bg-layer">
+        <!-- Video de fondo en loop (el usuario puede reemplazar fondo.mp4) -->
+        <video id="bg-video" autoplay loop muted playsinline>
+            <source src="fondo.mp4" type="video/mp4">
+        </video>
+        <!-- Canvas fallback animado (se activa automáticamente si no existe fondo.mp4) -->
+        <canvas id="bg-canvas"></canvas>
+        
+        <!-- CANVAS 3D THREE.JS: Trébol metálico oscuro con flat shading flotando tras el titular -->
+        <canvas id="bg-3d-canvas" class="bg-3d-canvas"></canvas>
+
+        <!-- Tinte base y viñeta oscura -->
+        <div class="bg-vignette"></div>
+        
+        <!-- Líneas CRT y grano sutil analógico -->
+        <div class="scanlines"></div>
+        
+        <!-- Capa de oscurecimiento adicional (+50% negro transparente para el estado final) -->
+        <div id="extra-darkness-overlay" class="extra-darkness"></div>
+    </div>
+
+    <!-- PANTALLA DE INTRO (Comienza en oscuridad total, fade in de iconoprincipal, parpadeo) -->
+    <div id="intro-screen" class="intro-screen">
+        <div class="intro-content">
+            <div class="intro-icon-wrapper" id="intro-icon-wrapper">
+                <img id="intro-icon" src="iconoprincipal.png" alt="Icono Principal" class="intro-icon">
+            </div>
+            <p class="intro-hint">[ TRANSMISIÓN ENTRANTE... ]</p>
+        </div>
+    </div>
+
+    <!-- FLASH / PARPADEO DE GLITCH -->
+    <div id="glitch-flash" class="glitch-flash"></div>
+
+    <!-- CONTENEDOR PRINCIPAL DE LA GUI -->
+    <main id="main-stage" class="main-stage hidden-initial">
+        
+        <!-- ENCABEZADO / TÍTULO -->
+        <header class="header-section">
+            <!-- Logo personalizado opcional -->
+            <div class="custom-logo-container" id="custom-logo-container">
+                <img src="logo.png" alt="Logo" class="custom-logo" id="custom-logo" onerror="this.style.display='none'">
+            </div>
+            <h1 class="cryptic-title" data-text="LOS TRES COROS">LOS TRES COROS</h1>
+            <div class="title-subline">[ UNA EXTENSION DE LAS PRUEBAS DE ETO // 2026. ]</div>
+        </header>
+
+        <!-- LOS TRES BOTONES CENTRALES -->
+        <section class="coros-section" aria-label="Selección de Coro">
+            
+            <!-- BOTÓN 1: UNO -->
+            <div class="coro-card" data-coro="1" role="button" tabindex="0">
+                <div class="coro-spotlight">
+                    <img src="coro1.png" alt="Uno" class="coro-img" id="img-coro1">
+                </div>
+                <div class="coro-label glitch-subtle" data-text="Uno">Uno</div>
+            </div>
+
+            <!-- BOTÓN 2: NOUS -->
+            <div class="coro-card" data-coro="2" role="button" tabindex="0">
+                <div class="coro-spotlight">
+                    <img src="coro2.png" alt="Nous" class="coro-img" id="img-coro2">
+                </div>
+                <div class="coro-label glitch-subtle" data-text="Nous">Nous</div>
+            </div>
+
+            <!-- BOTÓN 3: ALMA -->
+            <div class="coro-card" data-coro="3" role="button" tabindex="0">
+                <div class="coro-spotlight">
+                    <img src="coro3.png" alt="Alma" class="coro-img" id="img-coro3">
+                </div>
+                <div class="coro-label glitch-subtle" data-text="Alma">Alma</div>
+            </div>
+
+        </section>
+
+        <!-- PIE DE PÁGINA: BOTÓN TRÉBOL ORÁCULO -->
+        <footer class="footer-section">
+            <button id="btn-oraculo" class="cryptic-btn glitch-subtle" data-text="[ PARA EL TREBOL ORACULO ]">
+                [ PARA EL TREBOL ORACULO ]
+            </button>
+        </footer>
+
+    </main>
+
+    <!-- MODAL / POP-UP DEL TRÉBOL ORÁCULO -->
+    <div id="oracle-modal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span class="modal-title">[ TRÉBOL ORÁCULO // REGISTRO OCULTO ]</span>
+                <button id="oracle-close" class="modal-close" aria-label="Cerrar modal">[ × ]</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-text">
+                    "El Trebol Oraculo puede saber las pruebas de los otros coros, y, decir al privado a que equipo se le otorgara la respuesta de su respectiva prueba inmediatamente."
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button id="oracle-confirm-btn" class="cryptic-btn-sm">[ CERRAR TRANSMISIÓN ]</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANTALLA DE CLAVE DEDICADA (Aparece al pulsar Coro 1, 2 o 3) -->
+    <div id="password-screen" class="password-screen hidden" aria-hidden="true">
+        <div class="password-box">
+            <div class="box-tag" id="coro-tag">[ REQUERIMIENTO DE ACCESO ]</div>
+            <h2 class="password-title glitch-subtle" data-text="Clave Dedicada">Clave Dedicada</h2>
+            <p class="password-desc">INGRESE LA SECUENCIA DE CIFRADO AUTORIZADA:</p>
+            
+            <form id="key-form" class="key-form" onsubmit="return false;">
+                <div class="input-wrapper">
+                    <span class="input-prompt">&gt;</span>
+                    <input type="password" id="key-input" class="cryptic-input" placeholder="••••••••" spellcheck="false" autocomplete="off" autofocus>
+                </div>
+                
+                <div id="key-feedback" class="feedback-msg"></div>
+
+                <div class="form-actions">
+                    <button type="submit" id="submit-key-btn" class="cryptic-btn">[ TRANSMITIR ]</button>
+                    <button type="button" id="cancel-key-btn" class="cryptic-btn-ghost">[ REGRESAR ]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- PANTALLA FINAL DE ÉXITO ("En espera...") -->
+    <div id="success-screen" class="success-screen hidden" aria-hidden="true">
+        <div class="success-content">
+            <div class="success-badge">[ AUTORIZACIÓN VERIFICADA ]</div>
+            <h2 class="glitch-intense" data-text="En espera...">En espera...</h2>
+            <div class="cipher-stream" id="cipher-stream"></div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS CON CARGA ASÍNCRONA/DIFERIDA (NO BLOQUEAN EL FIRST PAINT) -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
+    <script src="clover3d.js" defer></script>
+    <script src="script.js" defer></script>
+</body>
+</html>
