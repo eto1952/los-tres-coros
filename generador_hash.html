@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GENERADOR DE HASH SHA-256 | LOS TRES COROS</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+        .container {
+            border: 2px solid #fff;
+            max-width: 650px;
+            width: 100%;
+            background: #0a0a0a;
+            padding: 2.5rem;
+            box-shadow: 0 0 30px rgba(255,255,255,0.15);
+        }
+        h1 {
+            font-size: 1.5rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            border-bottom: 1px dashed #444;
+            padding-bottom: 0.8rem;
+        }
+        p {
+            font-size: 0.9rem;
+            color: #aaa;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        label {
+            display: block;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            color: #ccc;
+        }
+        input {
+            width: 100%;
+            background: #000;
+            border: 1px solid #fff;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.1rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+            outline: none;
+        }
+        input:focus {
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+        .hash-output-container {
+            background: #000;
+            border: 1px dashed #666;
+            padding: 1rem;
+            word-break: break-all;
+            margin-bottom: 1.5rem;
+            min-height: 60px;
+            font-size: 0.95rem;
+            color: #00ffaa;
+            display: flex;
+            align-items: center;
+        }
+        .buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        button {
+            background: #fff;
+            color: #000;
+            border: 1px solid #fff;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            padding: 0.75rem 1.4rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+        }
+        button:hover {
+            background: #000;
+            color: #fff;
+        }
+        .btn-copy {
+            background: #000;
+            color: #fff;
+        }
+        .btn-copy:hover {
+            background: #fff;
+            color: #000;
+        }
+        .alert {
+            margin-top: 1.5rem;
+            font-size: 0.8rem;
+            color: #888;
+            border-top: 1px solid #222;
+            padding-top: 1rem;
+        }
+        .status-msg {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>[ GENERADOR SHA-256 ]</h1>
+        <p>Herramienta local para crear contraseñas criptográficas seguras para <strong>Los Tres Coros</strong>. Esta operación se ejecuta al 100% en tu navegador; ninguna clave sale de tu equipo.</p>
+        
+        <label for="plain-key">Texto de la Nueva Clave:</label>
+        <input type="text" id="plain-key" placeholder="Ej: Holder o TuNuevaClave123" value="Holder">
+
+        <label>Hash SHA-256 Resultante (Para pegar en script.js):</label>
+        <div class="hash-output-container" id="hash-output">efb13468b1325dfc7b9d2cf25525af78c96b9d914ec67204c64a456c07e9dc55</div>
+
+        <div class="buttons">
+            <button id="copy-btn" class="btn-copy">[ COPIAR HASH ]</button>
+            <a href="index.html" style="text-decoration:none;"><button type="button">[ IR A LA WEB ]</button></a>
+        </div>
+        <div id="status-msg" class="status-msg"></div>
+
+        <div class="alert">
+            <strong>Instrucciones:</strong><br>
+            Abre el archivo <code>script.js</code> y busca el bloque <code>CORO_HASHES</code>:<br>
+            <code>1: "efb13468...", // Botón 1: Uno</code><br>
+            Reemplaza el hash del botón correspondiente por el nuevo hash generado.
+        </div>
+    </div>
+
+    <script>
+        const input = document.getElementById('plain-key');
+        const output = document.getElementById('hash-output');
+        const copyBtn = document.getElementById('copy-btn');
+        const statusMsg = document.getElementById('status-msg');
+
+        async function computeSha256(str) {
+            const trimmed = str.trim();
+            if (window.crypto && window.crypto.subtle && window.crypto.subtle.digest) {
+                try {
+                    const encoder = new TextEncoder();
+                    const data = encoder.encode(trimmed);
+                    const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+                    const hashArray = Array.from(new Uint8Array(hashBuffer));
+                    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                } catch (e) {}
+            }
+            // Fallback manual SHA-256
+            return sha256Fallback(trimmed);
+        }
+
+        function sha256Fallback(ascii) {
+            function rightRotate(value, amount) {
+                return (value >>> amount) | (value << (32 - amount));
+            }
+            const mathPow = Math.pow;
+            const maxWord = mathPow(2, 32);
+            let lengthProperty = 'length';
+            let i, j;
+            const words = [];
+            const asciiBitLength = ascii[lengthProperty] * 8;
+            let hash = [];
+            const k = [];
+            let primeCounter = 0;
+            const isComposite = {};
+            for (let candidate = 2; primeCounter < 64; candidate++) {
+                if (!isComposite[candidate]) {
+                    for (i = 0; i < 313; i += candidate) isComposite[i] = candidate;
+                    hash[primeCounter] = (mathPow(candidate, .5) * maxWord) | 0;
+                    k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
+                }
+            }
+            hash = hash.slice(0, 8);
+            ascii += '\x80';
+            while (ascii[lengthProperty] % 64 - 56) ascii += '\x00';
+            for (i = 0; i < ascii[lengthProperty]; i++) {
+                j = ascii.charCodeAt(i);
+                if (j >> 8) return;
+                words[i >> 2] |= j << ((3 - i) % 4) * 8;
+            }
+            words[words[lengthProperty]] = ((asciiBitLength / maxWord) | 0);
+            words[words[lengthProperty]] = (asciiBitLength);
+            for (j = 0; j < words[lengthProperty];) {
+                const w = words.slice(j, j += 16);
+                const oldHash = hash;
+                hash = hash.slice(0, 8);
+                for (i = 0; i < 64; i++) {
+                    const i2 = i + j;
+                    const w15 = w[i - 15], w2 = w[i - 2];
+                    const a = hash[0], e = hash[4];
+                    const temp1 = hash[7]
+                        + (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25))
+                        + ((e & hash[5]) ^ ((~e) & hash[6]))
+                        + k[i]
+                        + (w[i] = (i < 16) ? w[i] : (
+                                w[i - 16]
+                                + (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3))
+                                + w[i - 7]
+                                + (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10))
+                            ) | 0
+                        );
+                    const temp2 = (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22))
+                        + ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));
+                    hash = [(temp1 + temp2) | 0].concat(hash);
+                    hash[4] = (hash[4] + temp1) | 0;
+                }
+                for (i = 0; i < 8; i++) hash[i] = (hash[i] + oldHash[i]) | 0;
+            }
+            let hexResult = '';
+            for (let h = 0; h < 8; h++) {
+                let hex = (hash[h] >>> 0).toString(16);
+                while (hex.length < 8) hex = '0' + hex;
+                hexResult += hex;
+            }
+            return hexResult;
+        }
+
+        async function updateHash() {
+            const val = input.value.trim();
+            if (!val) {
+                output.textContent = '[ INGRESA UN TEXTO ]';
+                output.style.color = '#888';
+                return;
+            }
+            const hex = await computeSha256(val);
+            output.textContent = hex;
+            output.style.color = '#fff';
+        }
+
+        input.addEventListener('input', updateHash);
+
+        copyBtn.addEventListener('click', () => {
+            const hashText = output.textContent;
+            if (hashText && !hashText.startsWith('[')) {
+                navigator.clipboard.writeText(hashText).then(() => {
+                    statusMsg.textContent = '[ ¡HASH COPIADO AL PORTAPAPELES! ]';
+                    setTimeout(() => statusMsg.textContent = '', 2500);
+                });
+            }
+        });
+
+        updateHash();
+    </script>
+</body>
+</html>
