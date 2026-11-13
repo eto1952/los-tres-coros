@@ -42,6 +42,85 @@ const CORO_SLUGS = {
     3: "alma"
 };
 
+// =========================================================================
+// MOTOR DE AUDIO CRÍPTICO AUTÓNOMO (WEB AUDIO API)
+// =========================================================================
+const SoundFX = (function() {
+    let ctx = null;
+
+    function getCtx() {
+        if (!ctx) {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (AudioCtx) ctx = new AudioCtx();
+        }
+        if (ctx && ctx.state === 'suspended') {
+            ctx.resume();
+        }
+        return ctx;
+    }
+
+    window.addEventListener('pointerdown', () => getCtx(), { once: true });
+
+    function playTone(freq, type, duration, gainVal = 0.08, rampToFreq = null) {
+        try {
+            const ac = getCtx();
+            if (!ac) return;
+            const osc = ac.createOscillator();
+            const gain = ac.createGain();
+
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, ac.currentTime);
+            if (rampToFreq) {
+                osc.frequency.exponentialRampToValueAtTime(rampToFreq, ac.currentTime + duration);
+            }
+
+            gain.gain.setValueAtTime(gainVal, ac.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + duration);
+
+            osc.connect(gain);
+            gain.connect(ac.destination);
+
+            osc.start();
+            osc.stop(ac.currentTime + duration);
+        } catch(e) {}
+    }
+
+    return {
+        click() {
+            playTone(900, 'sine', 0.035, 0.07, 300);
+        },
+        type() {
+            playTone(1200 + Math.random() * 200, 'sine', 0.02, 0.04, 600);
+        },
+        error() {
+            try {
+                const ac = getCtx();
+                if (!ac) return;
+                const osc = ac.createOscillator();
+                const gain = ac.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(115, ac.currentTime);
+                osc.frequency.linearRampToValueAtTime(45, ac.currentTime + 0.22);
+                gain.gain.setValueAtTime(0.12, ac.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.22);
+                osc.connect(gain);
+                gain.connect(ac.destination);
+                osc.start();
+                osc.stop(ac.currentTime + 0.22);
+            } catch(e) {}
+        },
+        step() {
+            try {
+                const ac = getCtx();
+                if (!ac) return;
+                [440, 554, 659].forEach((f, i) => {
+                    setTimeout(() => playTone(f, 'sine', 0.28, 0.08), i * 70);
+                });
+            } catch(e) {}
+        }
+    };
+})();
+
 // Estado actual
 let selectedCoro = null;
 let introCompleted = false;
@@ -216,6 +295,7 @@ coroCards.forEach(card => {
 });
 
 function openPasswordPrompt(coroId) {
+    SoundFX.click();
     selectedCoro = coroId;
     coroTag.textContent = `[ CORO SELECCIONADO: ${CORO_NAMES[coroId] || coroId} // ACCESO DEDICADO ]`;
     keyInput.value = '';
@@ -233,8 +313,14 @@ function openPasswordPrompt(coroId) {
     }, 400);
 }
 
+// Sonido táctil al escribir clave
+keyInput.addEventListener('input', () => {
+    SoundFX.type();
+});
+
 // Botón de regresar / cancelar en la pantalla de contraseña
 cancelKeyBtn.addEventListener('click', () => {
+    SoundFX.click();
     passwordScreen.classList.add('hidden');
     passwordScreen.style.display = 'none';
 
@@ -383,6 +469,7 @@ keyForm.addEventListener('submit', async (e) => {
 });
 
 function showKeyError(msg) {
+    SoundFX.error();
     keyFeedback.textContent = `[ ${msg} ]`;
     keyFeedback.className = 'feedback-msg denied';
     keyInput.value = '';
@@ -398,6 +485,7 @@ function showKeyError(msg) {
 // ESTADO DE ÉXITO: CARGA -> GLITCH -> DISOLUCIÓN ASCII TRÉBOLES -> FADE OUT
 // =========================================================================
 function handleAuthenticationSuccess() {
+    SoundFX.step();
     keyFeedback.textContent = '[ VERIFICACIÓN CORRECTA // DESENCRIPTANDO ]';
     keyFeedback.className = 'feedback-msg granted';
     keyInput.disabled = true;
@@ -551,11 +639,13 @@ function startCipherStream() {
 // POP-UP / MODAL DEL TRÉBOL ORÁCULO
 // =========================================================================
 btnOraculo.addEventListener('click', () => {
+    SoundFX.click();
     oracleModal.classList.add('active');
     oracleModal.setAttribute('aria-hidden', 'false');
 });
 
 function closeOracleModal() {
+    SoundFX.click();
     oracleModal.classList.remove('active');
     oracleModal.setAttribute('aria-hidden', 'true');
 }

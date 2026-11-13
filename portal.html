@@ -867,23 +867,99 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* RESPONSIVIDAD */
-        @media (max-width: 600px) {
+        /* RESPONSIVIDAD & OPTIMIZACIONES PARA MÓVIL */
+        @media (max-width: 650px) {
+            body {
+                padding: 1rem 0.6rem 2.5rem;
+            }
+
+            .portal-title {
+                font-size: 1.5rem;
+                letter-spacing: 0.18em;
+            }
+
+            .puzzle-card {
+                padding: 1.5rem 1rem;
+            }
+
+            .stepper {
+                gap: 0.4rem;
+            }
+
+            .step-pill {
+                font-size: 0.7rem;
+                padding: 0.35rem 0.6rem;
+            }
+
+            .circles-row {
+                gap: 0.6rem;
+                margin: 1.2rem 0;
+            }
+
             .circle-receptacle {
-                width: 115px;
-                height: 115px;
+                width: 102px;
+                height: 102px;
             }
-            .target-val { font-size: 0.9rem; }
-            .current-sum { font-size: 1.3rem; }
+
+            .target-tag { font-size: 0.62rem; }
+            .target-val { font-size: 0.8rem; margin-bottom: 0; }
+            .current-sum { font-size: 1.25rem; }
+            .seeds-in-circle { font-size: 0.52rem; }
+            .roots-top, .roots-bottom { font-size: 0.52rem; }
+
+            .seed-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+
             .harvest-arena, .scatter-field {
-                height: 330px;
+                height: 310px;
             }
+
+            .clover-node {
+                width: 50px;
+                height: 50px;
+            }
+
+            .clover-node .icon { font-size: 1.4rem; }
+            .clover-node .num { font-size: 1.15rem; }
+
             .harvest-clover {
-                width: 58px;
-                height: 58px;
+                width: 54px;
+                height: 54px;
             }
-            .harvest-clover .a1z26-num {
-                font-size: 1.3rem;
+
+            .harvest-clover .clover-glyph { font-size: 1.4rem; }
+            .harvest-clover .a1z26-num { font-size: 1.25rem; }
+
+            .word-input-container {
+                max-width: 100%;
+            }
+
+            .btn-pronounce {
+                width: 100%;
+                padding: 0.8rem 1rem;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .circle-receptacle {
+                width: 92px;
+                height: 92px;
+            }
+
+            .current-sum { font-size: 1.15rem; }
+            .target-val { font-size: 0.75rem; }
+            .seed-btn {
+                width: 33px;
+                height: 33px;
+                font-size: 0.9rem;
+            }
+
+            .clover-node {
+                width: 44px;
+                height: 44px;
             }
         }
     </style>
@@ -908,8 +984,8 @@
 
         <nav class="stepper">
             <div class="step-pill active" id="step-pill-1">[ I. SECUENCIA ASCENDENTE ]</div>
-            <div class="step-pill" id="step-pill-2">[ II. BALANZA DE LA TRÍADA ]</div>
-            <div class="step-pill" id="step-pill-3">[ III. COSECHA A1Z26 ]</div>
+            <div class="step-pill" id="step-pill-2">[ II. SIMETRIA ]</div>
+            <div class="step-pill" id="step-pill-3">[ III. EL SÍMBOLO ]</div>
         </nav>
     </header>
 
@@ -922,9 +998,7 @@
             <div class="puzzle-header">
                 <div class="puzzle-tag">[ PRUEBA I // MEMORIA Y ASCENSIÓN ]</div>
                 <h2 class="puzzle-name">Secuencia Ascendente</h2>
-                <p class="puzzle-lore">
-                    Ocho tréboles arcanos custodian frecuencias numéricas. Toca cada uno en estricto orden de menor a mayor. Un solo error desvanecerá las marcas, forzando a tu mente a recordar sus posiciones.
-                </p>
+                <p class="puzzle-lore">Fuerza tu mente, y recuerda sus posiciones.</p>
             </div>
 
             <div class="scatter-field" id="scatter-field">
@@ -936,15 +1010,12 @@
 
 
         <!-- ====================================================================
-             PUZZLE 2: LA BALANZA DE LA TRÍADA
+             PUZZLE 2: SIMETRIA.
              ==================================================================== -->
         <section class="puzzle-card hidden" id="puzzle-2">
             <div class="puzzle-header">
                 <div class="puzzle-tag">[ PRUEBA II // EQUILIBRIO DE RAÍCES ]</div>
-                <h2 class="puzzle-name">La Balanza de la Tríada</h2>
-                <p class="puzzle-lore">
-                    Tres receptáculos alimentados por lianas arcanas demandan tributo exacto: 10, 15 y 20. Distribuye las 9 semillas numéricas (del 1 al 9) hasta que las tres fuerzas se equilibren en simultáneo.
-                </p>
+                <h2 class="puzzle-name">SIMETRIA.</h2>
             </div>
 
             <div class="circles-row">
@@ -1023,15 +1094,12 @@
 
 
         <!-- ====================================================================
-             PUZZLE 3: COSECHA A1Z26
+             PUZZLE 3: EL SÍMBOLO
              ==================================================================== -->
         <section class="puzzle-card hidden" id="puzzle-3">
             <div class="puzzle-header">
                 <div class="puzzle-tag">[ PRUEBA III // EL CÓDIGO PRIMORDIAL ]</div>
-                <h2 class="puzzle-name">Cosecha A1Z26</h2>
-                <p class="puzzle-lore">
-                    Los tréboles flotantes rebotan resguardando el símbolo sagrado de tu Coro. Cada trébol requiere 5 golpes para florecer y revelar su cifra cifrada. Utiliza el Ojo del Oráculo para consultar el traductor.
-                </p>
+                <p class="puzzle-lore">Adivina el Ojo del Oraculo para obtener una pista mayor</p>
             </div>
 
             <!-- Arena de tréboles rebotando -->
@@ -1108,9 +1176,116 @@
     </div>
 
     <!-- ====================================================================
-         LÓGICA JAVASCRIPT COMPLETA Y AUTÓNOMA
+         LÓGICA JAVASCRIPT COMPLETA Y AUTÓNOMA (CON MOTOR DE AUDIO SINTETIZADO)
          ==================================================================== -->
     <script>
+        // =====================================================================
+        // MOTOR DE AUDIO CRÍPTICO AUTÓNOMO (WEB AUDIO API - ZERO ASSETS)
+        // =====================================================================
+        const SoundFX = (function() {
+            let ctx = null;
+
+            function getCtx() {
+                if (!ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    if (AudioCtx) ctx = new AudioCtx();
+                }
+                if (ctx && ctx.state === 'suspended') {
+                    ctx.resume();
+                }
+                return ctx;
+            }
+
+            // Desbloqueo automático al primer toque o clic
+            window.addEventListener('pointerdown', () => getCtx(), { once: true });
+
+            function playTone(freq, type, duration, gainVal = 0.08, rampToFreq = null) {
+                try {
+                    const ac = getCtx();
+                    if (!ac) return;
+                    const osc = ac.createOscillator();
+                    const gain = ac.createGain();
+
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, ac.currentTime);
+                    if (rampToFreq) {
+                        osc.frequency.exponentialRampToValueAtTime(rampToFreq, ac.currentTime + duration);
+                    }
+
+                    gain.gain.setValueAtTime(gainVal, ac.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + duration);
+
+                    osc.connect(gain);
+                    gain.connect(ac.destination);
+
+                    osc.start();
+                    osc.stop(ac.currentTime + duration);
+                } catch(e) {}
+            }
+
+            return {
+                click() {
+                    playTone(950, 'sine', 0.035, 0.07, 350);
+                },
+                reveal() {
+                    playTone(880, 'triangle', 0.09, 0.09, 1320);
+                },
+                error() {
+                    try {
+                        const ac = getCtx();
+                        if (!ac) return;
+                        const osc = ac.createOscillator();
+                        const gain = ac.createGain();
+                        osc.type = 'sawtooth';
+                        osc.frequency.setValueAtTime(115, ac.currentTime);
+                        osc.frequency.linearRampToValueAtTime(45, ac.currentTime + 0.22);
+                        gain.gain.setValueAtTime(0.12, ac.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.22);
+                        osc.connect(gain);
+                        gain.connect(ac.destination);
+                        osc.start();
+                        osc.stop(ac.currentTime + 0.22);
+                    } catch(e) {}
+                },
+                seed() {
+                    playTone(520, 'sine', 0.05, 0.08, 680);
+                },
+                deposit() {
+                    playTone(528, 'triangle', 0.12, 0.1, 880);
+                },
+                tap() {
+                    playTone(240, 'triangle', 0.045, 0.09, 130);
+                },
+                bloom() {
+                    try {
+                        const ac = getCtx();
+                        if (!ac) return;
+                        [1046, 1318, 1568].forEach((f, i) => {
+                            setTimeout(() => playTone(f, 'sine', 0.26, 0.08, f * 1.15), i * 55);
+                        });
+                    } catch(e) {}
+                },
+                step() {
+                    try {
+                        const ac = getCtx();
+                        if (!ac) return;
+                        [440, 554, 659].forEach((f, i) => {
+                            setTimeout(() => playTone(f, 'sine', 0.3, 0.08), i * 75);
+                        });
+                    } catch(e) {}
+                },
+                triumph() {
+                    try {
+                        const ac = getCtx();
+                        if (!ac) return;
+                        [330, 440, 554, 659, 880].forEach((f, i) => {
+                            setTimeout(() => playTone(f, 'sine', 0.65, 0.09), i * 105);
+                        });
+                    } catch(e) {}
+                }
+            };
+        })();
+
         // CONFIGURACIÓN DE COROS Y SUS PALABRAS SECRETAS
         const CORO_CONFIG = {
             'uno': {
@@ -1161,6 +1336,7 @@
 
         function switchCoro(slug) {
             if (!CORO_CONFIG[slug]) return;
+            SoundFX.click();
             currentCoroSlug = slug;
             sessionStorage.setItem('activeCoro', slug);
             
@@ -1188,6 +1364,7 @@
 
         function setStep(step) {
             currentStep = step;
+            SoundFX.step();
             document.querySelectorAll('.puzzle-card').forEach((card, idx) => {
                 if (idx + 1 === step) {
                     card.classList.remove('hidden');
@@ -1223,16 +1400,16 @@
         // PUZZLE 1: SECUENCIA ASCENDENTE
         // =====================================================================
         const P1_NUMBERS = [3, 7, 12, 18, 21, 27, 32, 35];
-        // Posiciones desordenadas orgánicas fijas
+        // Posiciones desordenadas orgánicas fijas (optimizadas para móvil y escritorio)
         const SCATTER_POSITIONS = [
-            { top: 12, left: 20 },
-            { top: 22, left: 65 },
-            { top: 48, left: 10 },
-            { top: 38, left: 42 },
-            { top: 58, left: 78 },
-            { top: 70, left: 22 },
-            { top: 76, left: 56 },
-            { top: 28, left: 86 }
+            { top: 10, left: 14 },
+            { top: 22, left: 56 },
+            { top: 46, left: 8 },
+            { top: 36, left: 36 },
+            { top: 58, left: 70 },
+            { top: 68, left: 18 },
+            { top: 74, left: 48 },
+            { top: 24, left: 74 }
         ];
 
         let p1ExpectedIndex = 0;
@@ -1246,7 +1423,6 @@
             p1Locked = false;
 
             // Barajar los números manteniendo fijas las posiciones espaciales
-            // Para que siempre estén en las mismas coordenadas pero en orden no secuencial
             const shuffledNums = [21, 7, 35, 12, 3, 18, 32, 27];
 
             p1Data = shuffledNums.map((num, i) => ({
@@ -1288,12 +1464,14 @@
 
             if (item.num === targetNum) {
                 // Correcto: se fija y avanzamos
+                SoundFX.reveal();
                 item.locked = true;
                 el.classList.add('locked');
                 p1ExpectedIndex++;
 
                 if (p1ExpectedIndex === P1_NUMBERS.length) {
                     // ¡Puzzle 1 completado!
+                    SoundFX.step();
                     document.getElementById('p1-feedback').textContent = '[ ¡SECUENCIA ASCENDENTE COMPLETA! ACCEDIENDO A LA BALANZA... ]';
                     p1Locked = true;
                     setTimeout(() => {
@@ -1304,6 +1482,7 @@
                 }
             } else {
                 // Error: número fuera de orden o menor al esperado
+                SoundFX.error();
                 p1Locked = true;
                 const field = document.getElementById('scatter-field');
                 field.classList.add('error-flash');
@@ -1311,7 +1490,6 @@
 
                 setTimeout(() => {
                     field.classList.remove('error-flash');
-                    // Ocultar todos los números revelados no fijados o resetear
                     p1ExpectedIndex = 0;
                     p1Data.forEach((d, i) => {
                         d.revealed = false;
@@ -1328,7 +1506,7 @@
         }
 
         // =====================================================================
-        // PUZZLE 2: LA BALANZA DE LA TRÍADA
+        // PUZZLE 2: SIMETRIA.
         // =====================================================================
         const TARGETS = [10, 15, 20];
         let circleSums = [0, 0, 0];
@@ -1340,6 +1518,7 @@
         }
 
         function resetScale() {
+            SoundFX.click();
             circleSums = [0, 0, 0];
             circleSeeds = [[], [], []];
             selectedSeed = null;
@@ -1364,6 +1543,7 @@
         }
 
         function selectSeed(num) {
+            SoundFX.seed();
             selectedSeed = num;
             document.querySelectorAll('.seed-btn').forEach(btn => {
                 btn.classList.toggle('selected', parseInt(btn.textContent, 10) === num);
@@ -1373,6 +1553,7 @@
 
         function depositSeed(circleIndex) {
             if (selectedSeed === null) return;
+            SoundFX.deposit();
 
             const seedVal = selectedSeed;
             circleSums[circleIndex] += seedVal;
@@ -1412,6 +1593,7 @@
             const balanced = circleSums[0] === TARGETS[0] && circleSums[1] === TARGETS[1] && circleSums[2] === TARGETS[2];
 
             if (balanced) {
+                SoundFX.step();
                 document.getElementById('shelf-hint').textContent = '[ ¡TRÍADA EN PERFECTA ARMONÍA (10 - 15 - 20)! AVANZANDO A LA COSECHA... ]';
                 setTimeout(() => {
                     setStep(3);
@@ -1420,7 +1602,7 @@
         }
 
         // =====================================================================
-        // PUZZLE 3: COSECHA A1Z26
+        // PUZZLE 3: EL SÍMBOLO
         // =====================================================================
         let harvestAnimId = null;
         let harvestClovers = [];
@@ -1461,8 +1643,8 @@
                 `;
 
                 // Posiciones y velocidades aleatorias suaves de rebote
-                const x = 30 + Math.random() * (arenaW - 120);
-                const y = 30 + Math.random() * (arenaH - 120);
+                const x = 20 + Math.random() * Math.max(arenaW - 100, 100);
+                const y = 20 + Math.random() * Math.max(arenaH - 100, 100);
                 const angle = Math.random() * Math.PI * 2;
                 const speed = 0.65 + Math.random() * 0.55;
 
@@ -1500,10 +1682,13 @@
 
             if (obj.clicksLeft <= 0) {
                 // Se abre: frena en seco y florece
+                SoundFX.bloom();
                 obj.opened = true;
                 obj.vx = 0;
                 obj.vy = 0;
                 obj.el.classList.add('opened');
+            } else {
+                SoundFX.tap();
             }
         }
 
@@ -1549,6 +1734,7 @@
         }
 
         function openRiddleModal() {
+            SoundFX.click();
             document.getElementById('riddle-modal').classList.add('active');
             document.getElementById('riddle-feedback').textContent = '';
             document.getElementById('riddle-input').value = '';
@@ -1556,6 +1742,7 @@
         }
 
         function closeRiddleModal() {
+            SoundFX.click();
             document.getElementById('riddle-modal').classList.remove('active');
         }
 
@@ -1564,10 +1751,12 @@
             const valid = ['letras', 'las letras', 'letra', 'abecedario', 'el abecedario', 'alfabeto', 'el alfabeto', 'palabras', 'palabra'];
 
             if (valid.includes(val)) {
+                SoundFX.step();
                 closeRiddleModal();
                 document.getElementById('translator-panel').classList.add('visible');
                 document.getElementById('p3-feedback').textContent = '[ TRADUCTOR A1Z26 DESBLOQUEADO // EXAMINA LAS CIFRAS ]';
             } else {
+                SoundFX.error();
                 document.getElementById('riddle-feedback').textContent = '[ RESPUESTA ERRÓNEA: PIENSA EN CÓMO SE FORMAN LOS NOMBRES ]';
                 const input = document.getElementById('riddle-input');
                 input.value = '';
@@ -1598,11 +1787,13 @@
 
             if (input.toLowerCase() === targetWord.toLowerCase()) {
                 // ¡Éxito absoluto!
+                SoundFX.triumph();
                 document.getElementById('p3-feedback').textContent = '';
                 document.getElementById('triumph-coro-title').textContent = config.name;
                 document.getElementById('triumph-word-display').textContent = targetWord.toUpperCase();
                 document.getElementById('triumph-modal').classList.add('active');
             } else {
+                SoundFX.error();
                 document.getElementById('p3-feedback').textContent = '[ PALABRA INCORRECTA: TRADUCE EL CÓDIGO A1Z26 DE LOS TRÉBOLES ABIERTOS ]';
                 const inputEl = document.getElementById('final-word-input');
                 inputEl.value = '';
