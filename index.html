@@ -62,7 +62,7 @@
             <!-- BOTÓN 1: UNO -->
             <div class="coro-card" data-coro="1" role="button" tabindex="0">
                 <div class="coro-spotlight">
-                    <img src="coro1.png" alt="Uno" class="coro-img" id="img-coro1">
+                    <img src="Coro1.png" alt="Uno" class="coro-img" id="img-coro1" onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='coro1.png';}">
                 </div>
                 <div class="coro-label glitch-subtle" data-text="Uno">Uno</div>
             </div>
@@ -70,7 +70,7 @@
             <!-- BOTÓN 2: NOUS -->
             <div class="coro-card" data-coro="2" role="button" tabindex="0">
                 <div class="coro-spotlight">
-                    <img src="coro2.png" alt="Nous" class="coro-img" id="img-coro2">
+                    <img src="Coro2.png" alt="Nous" class="coro-img" id="img-coro2" onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='coro2.png';}">
                 </div>
                 <div class="coro-label glitch-subtle" data-text="Nous">Nous</div>
             </div>
@@ -78,7 +78,7 @@
             <!-- BOTÓN 3: ALMA -->
             <div class="coro-card" data-coro="3" role="button" tabindex="0">
                 <div class="coro-spotlight">
-                    <img src="coro3.png" alt="Alma" class="coro-img" id="img-coro3">
+                    <img src="Coro3.png" alt="Alma" class="coro-img" id="img-coro3" onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='coro3.png';}">
                 </div>
                 <div class="coro-label glitch-subtle" data-text="Alma">Alma</div>
             </div>
@@ -135,14 +135,27 @@
         </div>
     </div>
 
-    <!-- PANTALLA FINAL DE ÉXITO ("En espera...") -->
+    <!-- PANTALLA FINAL DE ÉXITO ("En espera..." -> BARRA -> DILUCIÓN ASCII TRÉBOLES -> FADE OUT) -->
     <div id="success-screen" class="success-screen hidden" aria-hidden="true">
-        <div class="success-content">
+        <div class="success-content" id="success-content">
             <div class="success-badge">[ AUTORIZACIÓN VERIFICADA ]</div>
-            <h2 class="glitch-intense" data-text="En espera...">En espera...</h2>
+            <h2 class="glitch-intense" id="waiting-title" data-text="En espera...">En espera...</h2>
+            
+            <!-- Barra de carga críptica -->
+            <div class="load-track">
+                <div class="load-fill" id="load-fill"></div>
+            </div>
+            <div class="load-status" id="load-status">[ SINCRONIZANDO PORTAL: 0% ]</div>
+
             <div class="cipher-stream" id="cipher-stream"></div>
         </div>
+
+        <!-- Capa de animación ASCII / Tréboles de 4 hojas -->
+        <canvas id="ascii-storm-canvas" class="ascii-storm-canvas"></canvas>
     </div>
+
+    <!-- Cortina de fundido a negro para cambio de página -->
+    <div id="portal-curtain" class="portal-curtain"></div>
 
     <!-- SCRIPTS CON CARGA ASÍNCRONA/DIFERIDA (NO BLOQUEAN EL FIRST PAINT) -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>

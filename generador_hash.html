@@ -125,22 +125,23 @@
         <p>Herramienta local para crear contraseñas criptográficas seguras para <strong>Los Tres Coros</strong>. Esta operación se ejecuta al 100% en tu navegador; ninguna clave sale de tu equipo.</p>
         
         <label for="plain-key">Texto de la Nueva Clave:</label>
-        <input type="text" id="plain-key" placeholder="Ej: Holder o TuNuevaClave123" value="Holder">
+        <input type="text" id="plain-key" placeholder="Ej: 7340, 204, 6637 o TuNuevaClave" value="7340">
 
         <label>Hash SHA-256 Resultante (Para pegar en script.js):</label>
-        <div class="hash-output-container" id="hash-output">efb13468b1325dfc7b9d2cf25525af78c96b9d914ec67204c64a456c07e9dc55</div>
+        <div class="hash-output-container" id="hash-output">120c921ffa0261995b5bb4ab93bd1f75b44718013827589be329b77e0f8f677e</div>
 
         <div class="buttons">
             <button id="copy-btn" class="btn-copy">[ COPIAR HASH ]</button>
             <a href="index.html" style="text-decoration:none;"><button type="button">[ IR A LA WEB ]</button></a>
+            <a href="portal.html" style="text-decoration:none;"><button type="button">[ IR AL PORTAL ]</button></a>
         </div>
         <div id="status-msg" class="status-msg"></div>
 
         <div class="alert">
-            <strong>Instrucciones:</strong><br>
-            Abre el archivo <code>script.js</code> y busca el bloque <code>CORO_HASHES</code>:<br>
-            <code>1: "efb13468...", // Botón 1: Uno</code><br>
-            Reemplaza el hash del botón correspondiente por el nuevo hash generado.
+            <strong>Registro de Claves Actuales:</strong><br>
+            • Coro del Uno: <code>7340</code> &rarr; <code>120c921ffa0261995b5bb4ab93bd1f75b44718013827589be329b77e0f8f677e</code><br>
+            • Coro del Nous: <code>204</code> &rarr; <code>fc56dbc6d4652b315b86b71c8d688c1ccdea9c5f1fd07763d2659fde2e2fc49a</code><br>
+            • Coro del Alma: <code>6637</code> &rarr; <code>8279726d9928f47059d1731e2bb540f194aaaef2636381c3018e59c71ce1c226</code>
         </div>
     </div>
 

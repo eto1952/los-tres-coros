@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <title>LOS TRES COROS — EL PORTAL DE LAS TRES PRUEBAS</title>
+    <style>
+        /* ==========================================================================
+           ESTÉTICA ESOTÉRICA / MINIMALISTA OSCURA (BLACK & WHITE / COURIER NEW)
+           ========================================================================== */
+        :root {
+            --bg-black: #000000;
+            --surface-dark: #0a0a0a;
+            --text-white: #ffffff;
+            --text-dim: #888888;
+            --border-white: #ffffff;
+            --border-dim: #333333;
+            --font-mono: 'Courier New', Courier, monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-black);
+            color: var(--text-white);
+            font-family: var(--font-mono);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem 1rem 3rem;
+            position: relative;
+        }
+
+        /* Scanlines analógicas sutiles */
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(255,255,255,0) 50%, rgba(0,0,0,0.5) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.35;
+        }
+
+        /* Viñeta oscura periférica */
+        .vignette {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.92) 100%);
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* ENCABEZADO */
+        header {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .nav-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px dashed var(--border-dim);
+            padding-bottom: 0.8rem;
+        }
+
+        .back-link {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--text-white);
+        }
+
+        .coro-switch-container {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .coro-btn {
+            background: transparent;
+            border: 1px solid var(--border-dim);
+            color: var(--text-dim);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0.3rem 0.6rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .coro-btn.active, .coro-btn:hover {
+            border-color: var(--border-white);
+            color: var(--text-white);
+            background: #111;
+        }
+
+        .portal-title {
+            font-size: clamp(1.4rem, 4vw, 2.2rem);
+            font-weight: 900;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(255,255,255,0.7);
+            margin-bottom: 0.4rem;
+        }
+
+        .portal-subtitle {
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            color: var(--text-dim);
+        }
+
+        /* INDICADOR DE PASOS (STEPPER) */
+        .stepper {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.8rem;
+            margin: 1.5rem 0 0.5rem;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .step-pill {
+            font-size: 0.78rem;
+            letter-spacing: 0.15em;
+            padding: 0.4rem 0.8rem;
+            border: 1px solid var(--border-dim);
+            color: var(--text-dim);
+            background: #050505;
+            transition: all 0.3s;
+        }
+
+        .step-pill.active {
+            border-color: var(--border-white);
+            color: var(--text-white);
+            box-shadow: 0 0 10px rgba(255,255,255,0.4);
+            background: #151515;
+        }
+
+        .step-pill.completed {
+            border-color: #555;
+            color: #888;
+            text-decoration: line-through;
+        }
+
+        /* CONTENEDOR PRINCIPAL DE PUZZLES */
+        main {
+            width: 100%;
+            max-width: 880px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .puzzle-card {
+            background: var(--surface-dark);
+            border: 2px solid var(--border-white);
+            padding: 2.2rem 1.8rem;
+            box-shadow: 0 0 40px rgba(0,0,0,0.9), 0 0 20px rgba(255,255,255,0.1);
+            position: relative;
+            opacity: 1;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            margin-bottom: 2rem;
+        }
+
+        .puzzle-card.hidden {
+            display: none;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .puzzle-header {
+            text-align: center;
+            margin-bottom: 1.8rem;
+            border-bottom: 1px dashed var(--border-dim);
+            padding-bottom: 1rem;
+        }
+
+        .puzzle-tag {
+            font-size: 0.75rem;
+            letter-spacing: 0.3em;
+            color: var(--text-dim);
+            margin-bottom: 0.4rem;
+        }
+
+        .puzzle-name {
+            font-size: 1.5rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+        }
+
+        .puzzle-lore {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            letter-spacing: 0.12em;
+            margin-top: 0.6rem;
+            line-height: 1.5;
+        }
+
+        /* ==========================================================================
+           PUZZLE 1: SECUENCIA ASCENDENTE
+           ========================================================================== */
+        .scatter-field {
+            position: relative;
+            width: 100%;
+            height: 380px;
+            background: #000000;
+            border: 1px dashed var(--border-dim);
+            margin: 1.5rem 0;
+            overflow: hidden;
+            transition: background 0.3s;
+        }
+
+        .scatter-field.error-flash {
+            background: #330000 !important;
+            border-color: #ff2222;
+            animation: shake 0.4s ease;
+        }
+
+        .clover-node {
+            position: absolute;
+            width: 62px;
+            height: 62px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.25s, filter 0.25s;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(20,20,20,0.9) 0%, rgba(0,0,0,0.7) 70%);
+            border: 1px solid #333;
+        }
+
+        .clover-node:hover {
+            transform: scale(1.15);
+            border-color: #fff;
+            box-shadow: 0 0 15px rgba(255,255,255,0.4);
+        }
+
+        .clover-node .icon {
+            font-size: 1.8rem;
+            filter: grayscale(100%) brightness(120%);
+            transition: opacity 0.2s;
+        }
+
+        .clover-node .num {
+            display: none;
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 0 8px #ffffff;
+        }
+
+        .clover-node.revealed .icon {
+            display: none;
+        }
+
+        .clover-node.revealed .num {
+            display: block;
+        }
+
+        .clover-node.locked {
+            border-color: #ffffff;
+            background: #111;
+            box-shadow: 0 0 20px rgba(255,255,255,0.6);
+            pointer-events: none;
+        }
+
+        .p1-feedback {
+            text-align: center;
+            font-size: 0.85rem;
+            letter-spacing: 0.2em;
+            color: var(--text-dim);
+            min-height: 1.4rem;
+        }
+
+        /* ==========================================================================
+           PUZZLE 2: LA BALANZA DE LA TRÍADA
+           ========================================================================== */
+        .circles-row {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .scale-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .scale-node:hover {
+            transform: translateY(-4px);
+        }
+
+        .roots-top {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: #555555;
+            white-space: pre;
+            line-height: 1.1;
+            text-align: center;
+        }
+
+        .circle-receptacle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid var(--border-white);
+            background: #000000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.9), inset 0 0 15px rgba(255,255,255,0.05);
+            transition: all 0.3s;
+        }
+
+        .scale-node:hover .circle-receptacle {
+            border-color: #fff;
+            box-shadow: 0 0 25px rgba(255,255,255,0.3);
+        }
+
+        .circle-receptacle.matched {
+            border-color: #ffffff;
+            background: #151515;
+            box-shadow: 0 0 35px rgba(255,255,255,0.8), inset 0 0 20px rgba(255,255,255,0.3);
+        }
+
+        .target-tag {
+            font-size: 0.72rem;
+            letter-spacing: 0.15em;
+            color: var(--text-dim);
+        }
+
+        .target-val {
+            font-size: 1.05rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 0.2rem;
+        }
+
+        .current-sum {
+            font-size: 1.6rem;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            color: #ffffff;
+            text-shadow: 0 0 10px #ffffff;
+        }
+
+        .seeds-in-circle {
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            color: #888;
+            margin-top: 0.2rem;
+        }
+
+        .roots-bottom {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: #555555;
+            white-space: pre;
+            line-height: 1.1;
+            text-align: center;
+            margin-top: 0.4rem;
+        }
+
+        /* Banco de Semillas */
+        .seeds-shelf {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            border-top: 1px dashed var(--border-dim);
+            padding-top: 1.5rem;
+        }
+
+        .shelf-hint {
+            font-size: 0.8rem;
+            letter-spacing: 0.18em;
+            color: var(--text-dim);
+        }
+
+        .seeds-bank {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.6rem;
+        }
+
+        .seed-btn {
+            width: 44px;
+            height: 44px;
+            background: #000;
+            border: 1px solid var(--border-white);
+            color: #fff;
+            font-family: var(--font-mono);
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .seed-btn:hover:not(:disabled) {
+            background: #fff;
+            color: #000;
+            box-shadow: 0 0 15px #fff;
+            transform: translateY(-2px);
+        }
+
+        .seed-btn.selected {
+            background: #fff;
+            color: #000;
+            box-shadow: 0 0 20px #fff;
+            outline: 2px dashed #fff;
+            outline-offset: 4px;
+        }
+
+        .seed-btn:disabled, .seed-btn.used {
+            opacity: 0.18;
+            border-color: #444;
+            color: #444;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-reset-scale {
+            background: transparent;
+            color: var(--text-dim);
+            border: 1px dashed var(--border-dim);
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            letter-spacing: 0.15em;
+            padding: 0.5rem 1.2rem;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .btn-reset-scale:hover {
+            border-color: var(--border-white);
+            color: #fff;
+        }
+
+        /* ==========================================================================
+           PUZZLE 3: COSECHA A1Z26
+           ========================================================================== */
+        .harvest-arena {
+            position: relative;
+            width: 100%;
+            height: 380px;
+            background: #000000;
+            border: 1px solid var(--border-dim);
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+
+        .harvest-clover {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border-radius: 50%;
+            background: radial-gradient(circle, #1a1a1a 0%, #000000 80%);
+            border: 1px solid #444;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            user-select: none;
+        }
+
+        .harvest-clover:hover {
+            border-color: #fff;
+            box-shadow: 0 0 15px rgba(255,255,255,0.4);
+        }
+
+        .harvest-clover .order-badge {
+            display: none;
+            position: absolute;
+            top: -24px;
+            font-size: 0.72rem;
+            font-weight: bold;
+            color: #fff;
+            letter-spacing: 0.1em;
+            background: #000;
+            border: 1px solid #fff;
+            padding: 1px 6px;
+            border-radius: 2px;
+            box-shadow: 0 0 8px rgba(255,255,255,0.6);
+        }
+
+        .harvest-clover .clover-glyph {
+            font-size: 1.8rem;
+            transition: transform 0.2s;
+            filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));
+        }
+
+        .harvest-clover .a1z26-num {
+            display: none;
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 0 10px #ffffff;
+        }
+
+        .harvest-clover.opened {
+            border-color: #ffffff;
+            background: radial-gradient(circle, #222 0%, #050505 85%);
+            box-shadow: 0 0 25px rgba(255,255,255,0.7);
+        }
+
+        .harvest-clover.opened .clover-glyph {
+            display: none;
+        }
+
+        .harvest-clover.opened .a1z26-num {
+            display: block;
+        }
+
+        .harvest-clover.opened .order-badge {
+            display: block;
+        }
+
+        /* Animación de temblor al hacer clic */
+        .harvest-clover.shaking {
+            animation: clover-shake 0.35s ease;
+        }
+
+        @keyframes clover-shake {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            20% { transform: translate(-4px, 2px) rotate(-6deg); }
+            40% { transform: translate(4px, -3px) rotate(6deg); }
+            60% { transform: translate(-3px, -2px) rotate(-4deg); }
+            80% { transform: translate(3px, 2px) rotate(4deg); }
+        }
+
+        /* Botón Ojo Parpadeando ASCII */
+        .eye-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 1.8rem 0;
+            gap: 1rem;
+        }
+
+        .btn-blinking-eye {
+            background: #000000;
+            color: #ffffff;
+            border: 1px solid var(--border-white);
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            letter-spacing: 0.18em;
+            padding: 0.8rem 1.6rem;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0,0,0,0.9);
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .btn-blinking-eye:hover {
+            background: #ffffff;
+            color: #000000;
+            box-shadow: 0 0 25px rgba(255,255,255,0.7);
+        }
+
+        .ascii-eye-anim {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        /* Panel Traductor A1Z26 */
+        .translator-panel {
+            width: 100%;
+            background: #050505;
+            border: 1px dashed var(--border-white);
+            padding: 1.2rem;
+            margin-top: 1rem;
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .translator-panel.visible {
+            display: block;
+        }
+
+        .translator-title {
+            font-size: 0.85rem;
+            letter-spacing: 0.25em;
+            color: var(--text-white);
+            margin-bottom: 0.8rem;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 0.4rem;
+        }
+
+        .alphabet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        .alpha-item {
+            background: #111;
+            padding: 0.35rem 0.2rem;
+            border: 1px solid #252525;
+            color: #ccc;
+        }
+
+        .alpha-item strong {
+            color: #fff;
+        }
+
+        /* Sección de Pronunciación / Input */
+        .submission-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1.8rem;
+            border-top: 1px dashed var(--border-dim);
+            padding-top: 1.8rem;
+        }
+
+        .word-input-container {
+            display: flex;
+            width: 100%;
+            max-width: 480px;
+            border: 1px solid var(--border-white);
+            background: #000;
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.05);
+        }
+
+        .word-input-prefix {
+            padding: 0.75rem 1rem;
+            color: var(--text-dim);
+            font-weight: bold;
+        }
+
+        .word-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-family: var(--font-mono);
+            font-size: 1.1rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+        }
+
+        .btn-pronounce {
+            background: #ffffff;
+            color: #000000;
+            border: 1px solid #ffffff;
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            font-weight: bold;
+            letter-spacing: 0.2em;
+            padding: 0.85rem 2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 0 15px rgba(255,255,255,0.4);
+        }
+
+        .btn-pronounce:hover {
+            background: #000000;
+            color: #ffffff;
+            box-shadow: 0 0 25px rgba(255,255,255,0.7);
+        }
+
+        .error-message {
+            min-height: 1.4rem;
+            font-size: 0.82rem;
+            letter-spacing: 0.2em;
+            color: #ff4444;
+            text-align: center;
+        }
+
+        /* ==========================================================================
+           MODALES (ACERTIJO DEL OJO & TRIUNFAL FINAL)
+           ========================================================================== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background: #050505;
+            border: 2px solid var(--border-white);
+            width: 100%;
+            max-width: 580px;
+            padding: 2.2rem 1.8rem;
+            box-shadow: 0 0 50px rgba(0,0,0,1), 0 0 30px rgba(255,255,255,0.2);
+            position: relative;
+            animation: modalPop 0.35s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-family: var(--font-mono);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .modal-close-btn:hover {
+            color: #000;
+            background: #fff;
+        }
+
+        .riddle-text {
+            font-size: 1rem;
+            line-height: 1.7;
+            letter-spacing: 0.08em;
+            color: #eee;
+            margin: 1.2rem 0 1.5rem;
+            border-left: 3px solid #fff;
+            padding-left: 1rem;
+            font-style: italic;
+        }
+
+        .riddle-input-row {
+            display: flex;
+            gap: 0.6rem;
+            margin-bottom: 1rem;
+        }
+
+        .riddle-input {
+            flex: 1;
+            background: #000;
+            border: 1px solid #fff;
+            color: #fff;
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            padding: 0.6rem 0.8rem;
+            outline: none;
+        }
+
+        .btn-solve-riddle {
+            background: #fff;
+            color: #000;
+            border: 1px solid #fff;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding: 0 1.2rem;
+            cursor: pointer;
+        }
+
+        .btn-solve-riddle:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        /* Modal Triunfal */
+        .triumph-badge {
+            font-size: 0.85rem;
+            letter-spacing: 0.35em;
+            color: #888;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .triumph-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: 0.25em;
+            color: #ffffff;
+            text-align: center;
+            text-shadow: 0 0 15px #ffffff;
+            margin-bottom: 1.2rem;
+        }
+
+        .triumph-word-display {
+            font-size: 2.2rem;
+            font-weight: 900;
+            letter-spacing: 0.4em;
+            color: #ffffff;
+            text-align: center;
+            margin: 1rem 0;
+            background: #111;
+            border: 1px dashed #fff;
+            padding: 0.8rem;
+            text-shadow: 0 0 10px #ffffff;
+        }
+
+        .triumph-instruction {
+            font-size: 1rem;
+            line-height: 1.7;
+            letter-spacing: 0.1em;
+            color: #ffffff;
+            text-align: center;
+            margin: 1.5rem 0;
+            border: 1px solid #fff;
+            padding: 1.2rem;
+            background: #080808;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.92); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* RESPONSIVIDAD */
+        @media (max-width: 600px) {
+            .circle-receptacle {
+                width: 115px;
+                height: 115px;
+            }
+            .target-val { font-size: 0.9rem; }
+            .current-sum { font-size: 1.3rem; }
+            .harvest-arena, .scatter-field {
+                height: 330px;
+            }
+            .harvest-clover {
+                width: 58px;
+                height: 58px;
+            }
+            .harvest-clover .a1z26-num {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scanlines"></div>
+    <div class="vignette"></div>
+
+    <header>
+        <div class="nav-bar">
+            <a href="index.html" class="back-link">[ &lt; TEMPLO PRINCIPAL ]</a>
+            <div class="coro-switch-container">
+                <button class="coro-btn" data-slug="uno" onclick="switchCoro('uno')">UNO</button>
+                <button class="coro-btn" data-slug="nous" onclick="switchCoro('nous')">NOUS</button>
+                <button class="coro-btn" data-slug="alma" onclick="switchCoro('alma')">ALMA</button>
+            </div>
+        </div>
+
+        <h1 class="portal-title" id="portal-coro-title">PORTAL DEL CORO</h1>
+        <div class="portal-subtitle" id="portal-coro-subtitle">[ TRANSMISIÓN DE TRES PRUEBAS ENCADENADAS ]</div>
+
+        <nav class="stepper">
+            <div class="step-pill active" id="step-pill-1">[ I. SECUENCIA ASCENDENTE ]</div>
+            <div class="step-pill" id="step-pill-2">[ II. BALANZA DE LA TRÍADA ]</div>
+            <div class="step-pill" id="step-pill-3">[ III. COSECHA A1Z26 ]</div>
+        </nav>
+    </header>
+
+    <main>
+
+        <!-- ====================================================================
+             PUZZLE 1: SECUENCIA ASCENDENTE
+             ==================================================================== -->
+        <section class="puzzle-card" id="puzzle-1">
+            <div class="puzzle-header">
+                <div class="puzzle-tag">[ PRUEBA I // MEMORIA Y ASCENSIÓN ]</div>
+                <h2 class="puzzle-name">Secuencia Ascendente</h2>
+                <p class="puzzle-lore">
+                    Ocho tréboles arcanos custodian frecuencias numéricas. Toca cada uno en estricto orden de menor a mayor. Un solo error desvanecerá las marcas, forzando a tu mente a recordar sus posiciones.
+                </p>
+            </div>
+
+            <div class="scatter-field" id="scatter-field">
+                <!-- Se inyectan dinámicamente los 8 tréboles desordenados -->
+            </div>
+
+            <div class="p1-feedback" id="p1-feedback">[ TOCA EL MENOR NÚMERO DISPONIBLE ]</div>
+        </section>
+
+
+        <!-- ====================================================================
+             PUZZLE 2: LA BALANZA DE LA TRÍADA
+             ==================================================================== -->
+        <section class="puzzle-card hidden" id="puzzle-2">
+            <div class="puzzle-header">
+                <div class="puzzle-tag">[ PRUEBA II // EQUILIBRIO DE RAÍCES ]</div>
+                <h2 class="puzzle-name">La Balanza de la Tríada</h2>
+                <p class="puzzle-lore">
+                    Tres receptáculos alimentados por lianas arcanas demandan tributo exacto: 10, 15 y 20. Distribuye las 9 semillas numéricas (del 1 al 9) hasta que las tres fuerzas se equilibren en simultáneo.
+                </p>
+            </div>
+
+            <div class="circles-row">
+                <!-- Círculo A -->
+                <div class="scale-node" onclick="depositSeed(0)">
+                    <div class="roots-top">
+  .-'""'-.  
+ /   /\   \ 
+|   /  \   |
+                    </div>
+                    <div class="circle-receptacle" id="circle-0">
+                        <span class="target-tag">CÍRCULO A</span>
+                        <span class="target-val">META: 10</span>
+                        <span class="current-sum" id="sum-0">0</span>
+                        <span class="seeds-in-circle" id="seeds-list-0">[ vacío ]</span>
+                    </div>
+                    <div class="roots-bottom">
+   |/\|/|   
+  ~ (..) ~  
+ /   ||   \ 
+~    ~~    ~
+                    </div>
+                </div>
+
+                <!-- Círculo B -->
+                <div class="scale-node" onclick="depositSeed(1)">
+                    <div class="roots-top">
+  .-'""'-.  
+ /   \/   \ 
+|   \  /   |
+                    </div>
+                    <div class="circle-receptacle" id="circle-1">
+                        <span class="target-tag">CÍRCULO B</span>
+                        <span class="target-val">META: 15</span>
+                        <span class="current-sum" id="sum-1">0</span>
+                        <span class="seeds-in-circle" id="seeds-list-1">[ vacío ]</span>
+                    </div>
+                    <div class="roots-bottom">
+   |\/|/|   
+  ~ (..) ~  
+ /   ||   \ 
+~    ~~    ~
+                    </div>
+                </div>
+
+                <!-- Círculo C -->
+                <div class="scale-node" onclick="depositSeed(2)">
+                    <div class="roots-top">
+  .-'""'-.  
+ /  <><>  \ 
+|   <>><   |
+                    </div>
+                    <div class="circle-receptacle" id="circle-2">
+                        <span class="target-tag">CÍRCULO C</span>
+                        <span class="target-val">META: 20</span>
+                        <span class="current-sum" id="sum-2">0</span>
+                        <span class="seeds-in-circle" id="seeds-list-2">[ vacío ]</span>
+                    </div>
+                    <div class="roots-bottom">
+   |/\|/|   
+  ~ (..) ~  
+ /   ||   \ 
+~    ~~    ~
+                    </div>
+                </div>
+            </div>
+
+            <div class="seeds-shelf">
+                <div class="shelf-hint" id="shelf-hint">[ SELECCIONA UNA SEMILLA Y LUEGO HAZ CLIC EN EL CÍRCULO DESTINO ]</div>
+                <div class="seeds-bank" id="seeds-bank">
+                    <!-- Botones 1 al 9 generados dinámicamente -->
+                </div>
+                <button class="btn-reset-scale" onclick="resetScale()">[ REINICIAR BALANZA ]</button>
+            </div>
+        </section>
+
+
+        <!-- ====================================================================
+             PUZZLE 3: COSECHA A1Z26
+             ==================================================================== -->
+        <section class="puzzle-card hidden" id="puzzle-3">
+            <div class="puzzle-header">
+                <div class="puzzle-tag">[ PRUEBA III // EL CÓDIGO PRIMORDIAL ]</div>
+                <h2 class="puzzle-name">Cosecha A1Z26</h2>
+                <p class="puzzle-lore">
+                    Los tréboles flotantes rebotan resguardando el símbolo sagrado de tu Coro. Cada trébol requiere 5 golpes para florecer y revelar su cifra cifrada. Utiliza el Ojo del Oráculo para consultar el traductor.
+                </p>
+            </div>
+
+            <!-- Arena de tréboles rebotando -->
+            <div class="harvest-arena" id="harvest-arena">
+                <!-- Se inyectan los tréboles de la palabra según el Coro -->
+            </div>
+
+            <!-- Botón Ojo Parpadeando ASCII -->
+            <div class="eye-section">
+                <button class="btn-blinking-eye" id="btn-eye" onclick="openRiddleModal()">
+                    <span class="ascii-eye-anim" id="ascii-eye-text">( o . o )</span>
+                    <span>[ CONSULTAR ORÁCULO DE LETRAS ]</span>
+                </button>
+
+                <!-- Panel Traductor (se desbloquea al resolver el acertijo del ojo) -->
+                <div class="translator-panel" id="translator-panel">
+                    <div class="translator-title">[ TABLA CRIPTOGRÁFICA A1Z26 // TRADUCTOR ]</div>
+                    <div class="alphabet-grid" id="alphabet-grid">
+                        <!-- A=1 a Z=26 generado en JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Entrada de la palabra final -->
+            <div class="submission-wrap">
+                <div class="word-input-container">
+                    <span class="word-input-prefix">&gt;</span>
+                    <input type="text" id="final-word-input" class="word-input" placeholder="PRONUNCIA EL SÍMBOLO..." autocomplete="off" spellcheck="false">
+                </div>
+                <button class="btn-pronounce" onclick="verifyFinalWord()">[ PRONUNCIAR SÍMBOLO ]</button>
+                <div class="error-message" id="p3-feedback"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ====================================================================
+         MODAL: ACERTIJO DEL OJO PARPADEANTE
+         ==================================================================== -->
+    <div class="modal-overlay" id="riddle-modal">
+        <div class="modal-box">
+            <button class="modal-close-btn" onclick="closeRiddleModal()">[ × ]</button>
+            <div class="puzzle-tag">[ ENIGMA DEL ORÁCULO ]</div>
+            <h3 style="letter-spacing: 0.2em; text-transform: uppercase;">La Llave del Traductor</h3>
+            <p class="riddle-text">
+                "Veintiséis hermanas somos, mudas por separado; pero al unirnos con orden, todo secreto del mundo es revelado. ¿Quiénes somos?"
+            </p>
+            <form onsubmit="event.preventDefault(); verifyRiddle();" class="riddle-input-row">
+                <input type="text" id="riddle-input" class="riddle-input" placeholder="Escribe tu respuesta..." autocomplete="off">
+                <button type="submit" class="btn-solve-riddle">[ DESCIFRAR ]</button>
+            </form>
+            <div class="error-message" id="riddle-feedback"></div>
+        </div>
+    </div>
+
+    <!-- ====================================================================
+         MODAL: TRIUNFO FINAL DEL CORO
+         ==================================================================== -->
+    <div class="modal-overlay" id="triumph-modal">
+        <div class="modal-box" style="text-align: center;">
+            <div class="triumph-badge">[ CONSAGRACIÓN CONCLUIDA ]</div>
+            <h2 class="triumph-title" id="triumph-coro-title">¡TRIUNFO DEL CORO!</h2>
+            <p style="color: #aaa; letter-spacing: 0.15em; font-size: 0.85rem;">EL SÍMBOLO SAGRADO HA SIDO PRONUNCIADO:</p>
+            <div class="triumph-word-display" id="triumph-word-display">------</div>
+            
+            <div class="triumph-instruction">
+                "Habeis avanzado como coro, comenta la palabra descubierta en el grupo para confirmar vuestro exito por hoy."
+            </div>
+
+            <button class="btn-pronounce" onclick="window.location.href='index.html'" style="margin-top: 1rem;">
+                [ REGRESAR AL TEMPLO ]
+            </button>
+        </div>
+    </div>
+
+    <!-- ====================================================================
+         LÓGICA JAVASCRIPT COMPLETA Y AUTÓNOMA
+         ==================================================================== -->
+    <script>
+        // CONFIGURACIÓN DE COROS Y SUS PALABRAS SECRETAS
+        const CORO_CONFIG = {
+            'uno': {
+                name: 'CORO DEL UNO',
+                secretWord: 'Henosis',
+                subtitle: '[ VINCULACIÓN PRIMORDIAL // LA UNIDAD SUPREMA ]'
+            },
+            'nous': {
+                name: 'CORO DEL NOUS',
+                secretWord: 'Telestike',
+                subtitle: '[ INTELECTO TRASCENDENTE // EL RITO DE LAS FORMAS ]'
+            },
+            'alma': {
+                name: 'CORO DEL ALMA',
+                secretWord: 'Thauma',
+                subtitle: '[ VITALIDAD ARCANICA // EL ASOMBRO DE LO INVISIBLE ]'
+            }
+        };
+
+        // Estado Global
+        let currentCoroSlug = 'uno';
+        let currentStep = 1;
+
+        // =====================================================================
+        // INICIALIZACIÓN
+        // =====================================================================
+        window.addEventListener('DOMContentLoaded', () => {
+            // Determinar coro desde URL (?coro=...) o sessionStorage
+            const params = new URLSearchParams(window.location.search);
+            const urlCoro = params.get('coro');
+            const storedCoro = sessionStorage.getItem('activeCoro');
+
+            if (urlCoro && CORO_CONFIG[urlCoro.toLowerCase()]) {
+                currentCoroSlug = urlCoro.toLowerCase();
+            } else if (storedCoro && CORO_CONFIG[storedCoro.toLowerCase()]) {
+                currentCoroSlug = storedCoro.toLowerCase();
+            } else {
+                currentCoroSlug = 'uno';
+            }
+
+            applyCoroDetails();
+            initPuzzle1();
+            initPuzzle2();
+            initPuzzle3();
+            startEyeAnimation();
+            buildAlphabetGrid();
+        });
+
+        function switchCoro(slug) {
+            if (!CORO_CONFIG[slug]) return;
+            currentCoroSlug = slug;
+            sessionStorage.setItem('activeCoro', slug);
+            
+            // Actualizar URL sin recargar
+            const newUrl = window.location.pathname + '?coro=' + slug;
+            window.history.replaceState({ path: newUrl }, '', newUrl);
+
+            applyCoroDetails();
+            // Si estábamos en el puzzle 3, re-iniciarlo con la nueva palabra
+            if (currentStep === 3) {
+                initPuzzle3();
+            }
+        }
+
+        function applyCoroDetails() {
+            const config = CORO_CONFIG[currentCoroSlug];
+            document.getElementById('portal-coro-title').textContent = config.name;
+            document.getElementById('portal-coro-subtitle').textContent = config.subtitle;
+
+            // Actualizar botones de cambio
+            document.querySelectorAll('.coro-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.slug === currentCoroSlug);
+            });
+        }
+
+        function setStep(step) {
+            currentStep = step;
+            document.querySelectorAll('.puzzle-card').forEach((card, idx) => {
+                if (idx + 1 === step) {
+                    card.classList.remove('hidden');
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(15px)';
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 50);
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            // Actualizar stepper
+            for (let i = 1; i <= 3; i++) {
+                const pill = document.getElementById(`step-pill-${i}`);
+                if (i < step) {
+                    pill.className = 'step-pill completed';
+                } else if (i === step) {
+                    pill.className = 'step-pill active';
+                } else {
+                    pill.className = 'step-pill';
+                }
+            }
+
+            if (step === 3) {
+                initPuzzle3();
+            }
+        }
+
+        // =====================================================================
+        // PUZZLE 1: SECUENCIA ASCENDENTE
+        // =====================================================================
+        const P1_NUMBERS = [3, 7, 12, 18, 21, 27, 32, 35];
+        // Posiciones desordenadas orgánicas fijas
+        const SCATTER_POSITIONS = [
+            { top: 12, left: 20 },
+            { top: 22, left: 65 },
+            { top: 48, left: 10 },
+            { top: 38, left: 42 },
+            { top: 58, left: 78 },
+            { top: 70, left: 22 },
+            { top: 76, left: 56 },
+            { top: 28, left: 86 }
+        ];
+
+        let p1ExpectedIndex = 0;
+        let p1Locked = false;
+        let p1Data = [];
+
+        function initPuzzle1() {
+            const field = document.getElementById('scatter-field');
+            field.innerHTML = '';
+            p1ExpectedIndex = 0;
+            p1Locked = false;
+
+            // Barajar los números manteniendo fijas las posiciones espaciales
+            // Para que siempre estén en las mismas coordenadas pero en orden no secuencial
+            const shuffledNums = [21, 7, 35, 12, 3, 18, 32, 27];
+
+            p1Data = shuffledNums.map((num, i) => ({
+                num: num,
+                pos: SCATTER_POSITIONS[i],
+                revealed: false,
+                locked: false
+            }));
+
+            p1Data.forEach((item, index) => {
+                const el = document.createElement('div');
+                el.className = 'clover-node';
+                el.id = `clover-node-${index}`;
+                el.style.top = item.pos.top + '%';
+                el.style.left = item.pos.left + '%';
+
+                el.innerHTML = `
+                    <span class="icon">🍀</span>
+                    <span class="num">${item.num}</span>
+                `;
+
+                el.addEventListener('click', () => handleP1Click(index));
+                field.appendChild(el);
+            });
+
+            document.getElementById('p1-feedback').textContent = `[ BUSCA LA FRECUENCIA MÁS BAJA: ${P1_NUMBERS[0]} ]`;
+        }
+
+        function handleP1Click(index) {
+            if (p1Locked) return;
+            const item = p1Data[index];
+            if (item.locked) return;
+
+            const el = document.getElementById(`clover-node-${index}`);
+            el.classList.add('revealed');
+            item.revealed = true;
+
+            const targetNum = P1_NUMBERS[p1ExpectedIndex];
+
+            if (item.num === targetNum) {
+                // Correcto: se fija y avanzamos
+                item.locked = true;
+                el.classList.add('locked');
+                p1ExpectedIndex++;
+
+                if (p1ExpectedIndex === P1_NUMBERS.length) {
+                    // ¡Puzzle 1 completado!
+                    document.getElementById('p1-feedback').textContent = '[ ¡SECUENCIA ASCENDENTE COMPLETA! ACCEDIENDO A LA BALANZA... ]';
+                    p1Locked = true;
+                    setTimeout(() => {
+                        setStep(2);
+                    }, 1200);
+                } else {
+                    document.getElementById('p1-feedback').textContent = `[ CORRECTO (${item.num}) // SIGUIENTE: > ${item.num} ]`;
+                }
+            } else {
+                // Error: número fuera de orden o menor al esperado
+                p1Locked = true;
+                const field = document.getElementById('scatter-field');
+                field.classList.add('error-flash');
+                document.getElementById('p1-feedback').textContent = `[ FRECUENCIA ROTA: ${item.num} // REINICIANDO EN 800ms... ]`;
+
+                setTimeout(() => {
+                    field.classList.remove('error-flash');
+                    // Ocultar todos los números revelados no fijados o resetear
+                    p1ExpectedIndex = 0;
+                    p1Data.forEach((d, i) => {
+                        d.revealed = false;
+                        d.locked = false;
+                        const node = document.getElementById(`clover-node-${i}`);
+                        if (node) {
+                            node.className = 'clover-node';
+                        }
+                    });
+                    document.getElementById('p1-feedback').textContent = `[ MEMORIA RESETEADA // COMIENZA EN: ${P1_NUMBERS[0]} ]`;
+                    p1Locked = false;
+                }, 800);
+            }
+        }
+
+        // =====================================================================
+        // PUZZLE 2: LA BALANZA DE LA TRÍADA
+        // =====================================================================
+        const TARGETS = [10, 15, 20];
+        let circleSums = [0, 0, 0];
+        let circleSeeds = [[], [], []];
+        let selectedSeed = null;
+
+        function initPuzzle2() {
+            resetScale();
+        }
+
+        function resetScale() {
+            circleSums = [0, 0, 0];
+            circleSeeds = [[], [], []];
+            selectedSeed = null;
+
+            for (let i = 0; i < 3; i++) {
+                updateCircleUI(i);
+            }
+
+            const bank = document.getElementById('seeds-bank');
+            bank.innerHTML = '';
+
+            for (let n = 1; n <= 9; n++) {
+                const btn = document.createElement('button');
+                btn.className = 'seed-btn';
+                btn.id = `seed-btn-${n}`;
+                btn.textContent = n;
+                btn.addEventListener('click', () => selectSeed(n));
+                bank.appendChild(btn);
+            }
+
+            document.getElementById('shelf-hint').textContent = '[ SELECCIONA UNA SEMILLA Y LUEGO HAZ CLIC EN EL CÍRCULO DESTINO ]';
+        }
+
+        function selectSeed(num) {
+            selectedSeed = num;
+            document.querySelectorAll('.seed-btn').forEach(btn => {
+                btn.classList.toggle('selected', parseInt(btn.textContent, 10) === num);
+            });
+            document.getElementById('shelf-hint').textContent = `[ SEMILLA (${num}) LISTA // TOCA EL CÍRCULO A, B O C ]`;
+        }
+
+        function depositSeed(circleIndex) {
+            if (selectedSeed === null) return;
+
+            const seedVal = selectedSeed;
+            circleSums[circleIndex] += seedVal;
+            circleSeeds[circleIndex].push(seedVal);
+
+            // Desactivar semilla usada
+            const seedBtn = document.getElementById(`seed-btn-${seedVal}`);
+            if (seedBtn) {
+                seedBtn.disabled = true;
+                seedBtn.classList.remove('selected');
+                seedBtn.classList.add('used');
+            }
+
+            selectedSeed = null;
+            document.getElementById('shelf-hint').textContent = `[ DEPOSITADO EN CÍRCULO ${circleIndex === 0 ? 'A' : circleIndex === 1 ? 'B' : 'C'} ]`;
+
+            updateCircleUI(circleIndex);
+            checkPuzzle2Balance();
+        }
+
+        function updateCircleUI(i) {
+            const sumEl = document.getElementById(`sum-${i}`);
+            const listEl = document.getElementById(`seeds-list-${i}`);
+            const circleBox = document.getElementById(`circle-${i}`);
+
+            sumEl.textContent = circleSums[i];
+            listEl.textContent = circleSeeds[i].length > 0 ? `[ ${circleSeeds[i].join(' + ')} ]` : '[ vacío ]';
+
+            if (circleSums[i] === TARGETS[i]) {
+                circleBox.classList.add('matched');
+            } else {
+                circleBox.classList.remove('matched');
+            }
+        }
+
+        function checkPuzzle2Balance() {
+            const balanced = circleSums[0] === TARGETS[0] && circleSums[1] === TARGETS[1] && circleSums[2] === TARGETS[2];
+
+            if (balanced) {
+                document.getElementById('shelf-hint').textContent = '[ ¡TRÍADA EN PERFECTA ARMONÍA (10 - 15 - 20)! AVANZANDO A LA COSECHA... ]';
+                setTimeout(() => {
+                    setStep(3);
+                }, 1300);
+            }
+        }
+
+        // =====================================================================
+        // PUZZLE 3: COSECHA A1Z26
+        // =====================================================================
+        let harvestAnimId = null;
+        let harvestClovers = [];
+
+        function getA1Z26Code(char) {
+            const code = char.toUpperCase().charCodeAt(0);
+            return code >= 65 && code <= 90 ? (code - 64) : 0;
+        }
+
+        function initPuzzle3() {
+            const config = CORO_CONFIG[currentCoroSlug];
+            const word = config.secretWord;
+            const arena = document.getElementById('harvest-arena');
+            arena.innerHTML = '';
+
+            if (harvestAnimId) {
+                cancelAnimationFrame(harvestAnimId);
+                harvestAnimId = null;
+            }
+
+            harvestClovers = [];
+            const letters = word.split('');
+            const arenaRect = arena.getBoundingClientRect();
+            const arenaW = arenaRect.width || 600;
+            const arenaH = arenaRect.height || 360;
+
+            letters.forEach((letter, index) => {
+                const el = document.createElement('div');
+                el.className = 'harvest-clover';
+                el.id = `h-clover-${index}`;
+
+                const a1zNum = getA1Z26Code(letter);
+
+                el.innerHTML = `
+                    <div class="order-badge">#${index + 1}</div>
+                    <span class="clover-glyph">🍀</span>
+                    <span class="a1z26-num">${a1zNum}</span>
+                `;
+
+                // Posiciones y velocidades aleatorias suaves de rebote
+                const x = 30 + Math.random() * (arenaW - 120);
+                const y = 30 + Math.random() * (arenaH - 120);
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 0.65 + Math.random() * 0.55;
+
+                const cloverObj = {
+                    index: index,
+                    letter: letter,
+                    a1zNum: a1zNum,
+                    clicksLeft: 5,
+                    opened: false,
+                    el: el,
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    radius: 35
+                };
+
+                el.addEventListener('click', () => handleHarvestClick(cloverObj));
+                arena.appendChild(el);
+                harvestClovers.push(cloverObj);
+            });
+
+            startHarvestPhysics();
+        }
+
+        function handleHarvestClick(obj) {
+            if (obj.opened) return;
+
+            obj.clicksLeft--;
+
+            // Animación de temblor
+            obj.el.classList.remove('shaking');
+            void obj.el.offsetWidth; // Forzar reflow para reiniciar animación
+            obj.el.classList.add('shaking');
+
+            if (obj.clicksLeft <= 0) {
+                // Se abre: frena en seco y florece
+                obj.opened = true;
+                obj.vx = 0;
+                obj.vy = 0;
+                obj.el.classList.add('opened');
+            }
+        }
+
+        function startHarvestPhysics() {
+            const arena = document.getElementById('harvest-arena');
+
+            function stepPhysics() {
+                const w = arena.clientWidth || 600;
+                const h = arena.clientHeight || 360;
+
+                harvestClovers.forEach(c => {
+                    if (!c.opened) {
+                        c.x += c.vx;
+                        c.y += c.vy;
+
+                        // Rebote contra paredes
+                        if (c.x <= 0) { c.x = 0; c.vx = Math.abs(c.vx); }
+                        if (c.x >= w - c.radius * 2) { c.x = w - c.radius * 2; c.vx = -Math.abs(c.vx); }
+                        if (c.y <= 0) { c.y = 0; c.vy = Math.abs(c.vy); }
+                        if (c.y >= h - c.radius * 2) { c.y = h - c.radius * 2; c.vy = -Math.abs(c.vy); }
+                    }
+
+                    c.el.style.transform = `translate(${c.x}px, ${c.y}px)`;
+                });
+
+                harvestAnimId = requestAnimationFrame(stepPhysics);
+            }
+
+            harvestAnimId = requestAnimationFrame(stepPhysics);
+        }
+
+        // =====================================================================
+        // OJO PARPADEANTE ASCII Y TRADUCTOR
+        // =====================================================================
+        function startEyeAnimation() {
+            const eyeText = document.getElementById('ascii-eye-text');
+            const frames = ['( o . o )', '( o . o )', '( - . - )', '( ◉ . ◉ )', '( o . o )'];
+            let f = 0;
+            setInterval(() => {
+                f = (f + 1) % frames.length;
+                if (eyeText) eyeText.textContent = frames[f];
+            }, 650);
+        }
+
+        function openRiddleModal() {
+            document.getElementById('riddle-modal').classList.add('active');
+            document.getElementById('riddle-feedback').textContent = '';
+            document.getElementById('riddle-input').value = '';
+            document.getElementById('riddle-input').focus();
+        }
+
+        function closeRiddleModal() {
+            document.getElementById('riddle-modal').classList.remove('active');
+        }
+
+        function verifyRiddle() {
+            const val = document.getElementById('riddle-input').value.trim().toLowerCase();
+            const valid = ['letras', 'las letras', 'letra', 'abecedario', 'el abecedario', 'alfabeto', 'el alfabeto', 'palabras', 'palabra'];
+
+            if (valid.includes(val)) {
+                closeRiddleModal();
+                document.getElementById('translator-panel').classList.add('visible');
+                document.getElementById('p3-feedback').textContent = '[ TRADUCTOR A1Z26 DESBLOQUEADO // EXAMINA LAS CIFRAS ]';
+            } else {
+                document.getElementById('riddle-feedback').textContent = '[ RESPUESTA ERRÓNEA: PIENSA EN CÓMO SE FORMAN LOS NOMBRES ]';
+                const input = document.getElementById('riddle-input');
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        function buildAlphabetGrid() {
+            const grid = document.getElementById('alphabet-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            for (let i = 1; i <= 26; i++) {
+                const char = String.fromCharCode(64 + i);
+                const cell = document.createElement('div');
+                cell.className = 'alpha-item';
+                cell.innerHTML = `<strong>${char}</strong>=${i}`;
+                grid.appendChild(cell);
+            }
+        }
+
+        // =====================================================================
+        // VALIDACIÓN DE PALABRA FINAL DEL CORO
+        // =====================================================================
+        function verifyFinalWord() {
+            const input = document.getElementById('final-word-input').value.trim();
+            const config = CORO_CONFIG[currentCoroSlug];
+            const targetWord = config.secretWord;
+
+            if (input.toLowerCase() === targetWord.toLowerCase()) {
+                // ¡Éxito absoluto!
+                document.getElementById('p3-feedback').textContent = '';
+                document.getElementById('triumph-coro-title').textContent = config.name;
+                document.getElementById('triumph-word-display').textContent = targetWord.toUpperCase();
+                document.getElementById('triumph-modal').classList.add('active');
+            } else {
+                document.getElementById('p3-feedback').textContent = '[ PALABRA INCORRECTA: TRADUCE EL CÓDIGO A1Z26 DE LOS TRÉBOLES ABIERTOS ]';
+                const inputEl = document.getElementById('final-word-input');
+                inputEl.value = '';
+                inputEl.focus();
+            }
+        }
+    </script>
+</body>
+</html>

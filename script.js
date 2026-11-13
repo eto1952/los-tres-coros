@@ -17,18 +17,29 @@
  * =========================================================================
  */
 
-// REGISTRO DE HASHES POR CORO
+// =========================================================================
+// REGISTRO DE HASHES POR CORO (SHA-256)
+// Coro del Uno: "7340"
+// Coro del Nous: "204"
+// Coro del Alma: "6637"
+// =========================================================================
 const CORO_HASHES = {
-    1: "efb13468b1325dfc7b9d2cf25525af78c96b9d914ec67204c64a456c07e9dc55", // Botón 1: Uno  (Clave: Holder)
-    2: "efb13468b1325dfc7b9d2cf25525af78c96b9d914ec67204c64a456c07e9dc55", // Botón 2: Nous (Clave: Holder)
-    3: "efb13468b1325dfc7b9d2cf25525af78c96b9d914ec67204c64a456c07e9dc55"  // Botón 3: Alma (Clave: Holder)
+    1: "120c921ffa0261995b5bb4ab93bd1f75b44718013827589be329b77e0f8f677e", // Botón 1: Uno  (Clave: 7340)
+    2: "fc56dbc6d4652b315b86b71c8d688c1ccdea9c5f1fd07763d2659fde2e2fc49a", // Botón 2: Nous (Clave: 204)
+    3: "8279726d9928f47059d1731e2bb540f194aaaef2636381c3018e59c71ce1c226"  // Botón 3: Alma (Clave: 6637)
 };
 
-// Nombres para referencia visual en la interfaz de clave
+// Nombres y slugs para referencia visual y navegación
 const CORO_NAMES = {
     1: "UNO",
     2: "NOUS",
     3: "ALMA"
+};
+
+const CORO_SLUGS = {
+    1: "uno",
+    2: "nous",
+    3: "alma"
 };
 
 // Estado actual
@@ -384,7 +395,7 @@ function showKeyError(msg) {
 }
 
 // =========================================================================
-// ESTADO DE ÉXITO: 50% EXTRA OSCURIDAD + "En espera..."
+// ESTADO DE ÉXITO: CARGA -> GLITCH -> DISOLUCIÓN ASCII TRÉBOLES -> FADE OUT
 // =========================================================================
 function handleAuthenticationSuccess() {
     keyFeedback.textContent = '[ VERIFICACIÓN CORRECTA // DESENCRIPTANDO ]';
@@ -399,13 +410,129 @@ function handleAuthenticationSuccess() {
         // 2. Aplicar 50% extra de oscuridad/color negro transparente sobre el fondo animado
         extraDarkness.classList.add('active');
 
-        // 3. Mostrar pantalla final con texto glitcheándose "En espera..."
+        // 3. Mostrar pantalla de carga con texto glitcheándose "En espera..."
         successScreen.classList.remove('hidden');
         successScreen.style.display = 'flex';
 
         // 4. Iniciar stream de telemetría críptica en segundo plano
         startCipherStream();
+
+        // 5. Iniciar llenado de la barra de carga hacia el portal
+        startPortalLoadingSequence();
     }, 700);
+}
+
+function startPortalLoadingSequence() {
+    const loadFill = document.getElementById('load-fill');
+    const loadStatus = document.getElementById('load-status');
+    const successContent = document.getElementById('success-content');
+    const portalCurtain = document.getElementById('portal-curtain');
+    let percent = 0;
+
+    const interval = setInterval(() => {
+        // Incremento con pequeños saltos aleatorios estilo terminal
+        percent += Math.floor(Math.random() * 8) + 3;
+        if (percent > 100) percent = 100;
+
+        if (loadFill) loadFill.style.width = percent + '%';
+        if (loadStatus) loadStatus.textContent = `[ SINCRONIZANDO PORTAL: ${percent}% ]`;
+
+        if (percent >= 100) {
+            clearInterval(interval);
+            loadStatus.textContent = '[ PORTAL SOBRECARGADO // DILUCIÓN INMINENTE ]';
+            
+            // Glitch violento y colapso del panel
+            setTimeout(() => {
+                if (successContent) successContent.classList.add('intense-collapse');
+                launchAsciiCloverDissolution();
+            }, 500);
+
+            // Fundido a negro final y transición a la otra página
+            setTimeout(() => {
+                if (portalCurtain) portalCurtain.classList.add('fade-out');
+            }, 2300);
+
+            setTimeout(() => {
+                const slug = CORO_SLUGS[selectedCoro] || 'uno';
+                try {
+                    sessionStorage.setItem('activeCoro', slug);
+                } catch (e) {}
+                window.location.href = `portal.html?coro=${slug}`;
+            }, 3500);
+        }
+    }, 90);
+}
+
+// Animación de tréboles de 4 hojas en ASCII / Matrix Storm
+function launchAsciiCloverDissolution() {
+    const canvas = document.getElementById('ascii-storm-canvas');
+    if (!canvas) return;
+
+    canvas.classList.add('active');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width = window.innerWidth;
+    const h = canvas.height = window.innerHeight;
+
+    const asciiCloverArt = [
+        '  .-. .-.  \n (   X   ) \n  \'-\'|\'-\'  ',
+        '   _ /\\ _   \n  >_  _<  \n    \\/    ',
+        ' [ 🍀 ] ',
+        ' { ♣ } ',
+        ' <+> ',
+        ' 0x4C_CLOVER ',
+        ' /* TRIPARTITE */ ',
+        ' .::[ 4-LEAF ]::. ',
+        ' [ ETO-2026 ] '
+    ];
+
+    const particles = Array.from({ length: 65 }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        text: asciiCloverArt[Math.floor(Math.random() * asciiCloverArt.length)],
+        vx: (Math.random() - 0.5) * 6,
+        vy: (Math.random() - 0.5) * 6 - 2,
+        size: Math.floor(Math.random() * 8) + 12,
+        alpha: 1,
+        fadeSpeed: Math.random() * 0.015 + 0.008
+    }));
+
+    let animRunning = true;
+
+    function renderStorm() {
+        if (!animRunning) return;
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.18)';
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.font = '14px "Courier New", Courier, monospace';
+        ctx.fillStyle = '#ffffff';
+
+        particles.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.alpha -= p.fadeSpeed;
+            if (p.alpha < 0) p.alpha = 0;
+
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.font = `${p.size}px "Courier New", Courier, monospace`;
+            
+            // Soporte multilínea para mini ASCII art
+            const lines = p.text.split('\n');
+            lines.forEach((line, idx) => {
+                ctx.fillText(line, p.x, p.y + (idx * (p.size + 2)));
+            });
+
+            ctx.restore();
+        });
+
+        requestAnimationFrame(renderStorm);
+    }
+
+    renderStorm();
+
+    setTimeout(() => {
+        animRunning = false;
+    }, 3500);
 }
 
 function startCipherStream() {
@@ -470,8 +597,37 @@ window.generarHash = async function(clave) {
 };
 
 // =========================================================================
+// TOLERANCIA A MAYÚSCULAS/MINÚSCULAS PARA GITHUB PAGES (LINUX)
+// =========================================================================
+function setupImageFallbacks() {
+    const imagesToProtect = [
+        { id: 'img-coro1', variants: ['Coro1.png', 'coro1.png', 'Coro1.PNG', 'coro1.PNG'] },
+        { id: 'img-coro2', variants: ['Coro2.png', 'coro2.png', 'Coro2.PNG', 'coro2.PNG'] },
+        { id: 'img-coro3', variants: ['Coro3.png', 'coro3.png', 'Coro3.PNG', 'coro3.PNG'] },
+        { id: 'intro-icon', variants: ['iconoprincipal.png', 'Iconoprincipal.png', 'IconoPrincipal.png', 'iconoprincipal.PNG'] },
+        { id: 'custom-logo', variants: ['logo.png', 'Logo.png', 'LOGO.png', 'logo.PNG'] }
+    ];
+
+    imagesToProtect.forEach(({ id, variants }) => {
+        const img = document.getElementById(id);
+        if (!img) return;
+
+        let attempt = 0;
+        img.addEventListener('error', function errorHandler() {
+            attempt++;
+            if (attempt < variants.length) {
+                this.src = variants[attempt];
+            } else {
+                this.removeEventListener('error', errorHandler);
+            }
+        });
+    });
+}
+
+// =========================================================================
 // INICIAR
 // =========================================================================
 window.addEventListener('DOMContentLoaded', () => {
+    setupImageFallbacks();
     runIntroSequence();
 });

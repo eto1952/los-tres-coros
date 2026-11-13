@@ -661,6 +661,80 @@ html, body {
     flex-direction: column;
     align-items: center;
     gap: 1.5rem;
+    position: relative;
+    z-index: 10;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.success-content.intense-collapse {
+    animation: content-glitch-dissolve 0.8s forwards;
+}
+
+.load-track {
+    width: 320px;
+    max-width: 80vw;
+    height: 8px;
+    background: #111111;
+    border: 1px solid var(--border-white);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.load-fill {
+    width: 0%;
+    height: 100%;
+    background: #ffffff;
+    box-shadow: 0 0 12px #ffffff;
+    transition: width 0.1s linear;
+}
+
+.load-status {
+    font-size: 0.82rem;
+    letter-spacing: 0.22em;
+    color: #ffffff;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+}
+
+/* Capa de tormenta de tréboles ASCII */
+.ascii-storm-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 20;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.ascii-storm-canvas.active {
+    opacity: 1;
+}
+
+/* Cortina de fundido a negro final */
+.portal-curtain {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000000;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.portal-curtain.fade-out {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+@keyframes content-glitch-dissolve {
+    0% { transform: scale(1); filter: brightness(1) invert(0); }
+    30% { transform: scale(1.05) skewX(10deg); filter: brightness(2) invert(1); }
+    60% { transform: scale(0.95) skewY(-8deg); filter: blur(2px) contrast(3); }
+    100% { transform: scale(1.15) translateY(-20px); opacity: 0; filter: blur(6px); }
 }
 
 .success-badge {
